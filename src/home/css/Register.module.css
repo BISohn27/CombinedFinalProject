@@ -1,0 +1,15 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.heightControll {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.label {
+    padding-right: 0;
+}

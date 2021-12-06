@@ -1,0 +1,22 @@
+#navBox{
+    width:30%;
+    padding-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+.navDiv{
+    color: lightgray;
+}
+.iconSpan{
+    text-decoration: none;
+    display:inline-block;
+    padding-right:3px;
+    font-size: larger;
+}
+.navLink{
+    text-decoration: none;
+    color: lightgray;
+}
+.navLink:hover{
+    color: lightslategrey;
+}

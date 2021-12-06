@@ -1,0 +1,21 @@
+#wrapper {
+    position: relative;
+}
+
+#ownerWrapper {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+}
+
+#searchWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 60%;
+    height: 20%;
+    position: absolute;
+    top: 30%;
+    left: 20%;
+}

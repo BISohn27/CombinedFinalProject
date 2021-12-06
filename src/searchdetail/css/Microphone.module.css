@@ -1,0 +1,30 @@
+#microphone{
+    display:flex;
+    align-items: center;
+    height:80%;
+    font-size:large;
+    color: red;
+}
+#inactiveMicrophone{
+    display:flex;
+    align-items: center;
+    height:80%;
+    font-size:large;
+    color: rgb(160, 160, 160);
+}
+#microphone:hover {
+    color: lightcoral;
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+}
+#inactiveMicrophone:hover{
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    color: lightgray;
+}

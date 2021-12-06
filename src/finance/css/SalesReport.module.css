@@ -1,0 +1,9 @@
+#reportWrap{
+    width:80%;
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    -webkit-box-shadow: -2px 10px 39px -20px rgba(0,0,0,0.46);
+    -moz-box-shadow: -2px 10px 39px -20px rgba(0,0,0,0.46);
+    box-shadow: -2px 10px 39px -20px rgba(0,0,0,0.46);
+}
