@@ -136,7 +136,7 @@ const AdminCategory = (props) => {
 };
 
 const Leftbar = (props) => {
-    const { setFeed, userType, categoryList } = props;
+    const { setFeed, userType, categoryList, loginState } = props;
     const classes = useStyles();
     // 선택지에서 "메뉴"를 클릭하면 하위 선택지가 나오도록 하기 위한 state / event
     const [menuOpen, setMenuOpen] = React.useState(false);
@@ -212,7 +212,7 @@ const Leftbar = (props) => {
                         <Typography className={classes.text}>갤러리</Typography>
                     </div>
                 </ListItemButton>
-                {userType === "owner" &&
+                {!loginState ? null : 
                     <ListItemButton aria-describedby="menu" onClick={clickAdmin} onBlur={clickAdminClose} sx={{ padding: 0 }}>
                         <div className={classes.item}>
                             <SupervisorAccountIcon className={classes.icon} />
@@ -222,7 +222,8 @@ const Leftbar = (props) => {
                                 {adminOpen ? <ExpandLess /> : <ExpandMore />}
                             </div>
                         </div>
-                    </ListItemButton>}
+                    </ListItemButton>
+                }
 
 
                 <Collapse in={adminOpen} timeout="auto" unmountOnExit className={classes.hideOnMobile}>

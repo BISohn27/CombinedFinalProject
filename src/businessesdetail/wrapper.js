@@ -9,7 +9,7 @@ import { makeStyles } from "@mui/styles"
 import { createTheme } from "@mui/material/styles";
 import { useParams } from 'react-router-dom';
 import superagent from "superagent";
-
+import axios from 'axios';
 
 const theme = createTheme()
 const useStyles = makeStyles(() => ({
@@ -23,6 +23,8 @@ const useStyles = makeStyles(() => ({
 const Wrapper = (props) => {
     const { userType } = props;
     const classes = useStyles();
+
+    const [loginState, setLoginState] = React.useState(false);
 
     // enterprise 상태 변수
     const [enterpriseState, setEnterpriseState] = React.useState();
@@ -44,7 +46,36 @@ const Wrapper = (props) => {
     // 해당 컴포넌트에 접근했을 때, 처음 실행되는 코드
     const { enterpriseCode } = useParams();
 
+    const authenticate = async (token,setState) => {
+        const state = await axios({
+                            url: "http://localhost:20000/authorize",
+                            method: "post",
+                            responseType:"json",
+                            headers: {
+                                'Authorization': 'Bearer ' + token,
+                                "Content-Type": "application/json"
+                            },
+                            data: {
+                                    token: token,
+                                    eno: enterpriseCode
+                            },
+                        });
+        if(state.data){
+            setState(true);
+        } else{
+            setState(false);
+        }
+    } 
+    
     React.useEffect(() => {
+        const token = localStorage.getItem("token");
+        
+        if(token !== undefined && token !== null){
+            authenticate(token,setLoginState);
+        } else{
+            setLoginState(false);
+        }
+
         const url = "http://localhost:20000/enterprises/" + enterpriseCode;
         GETenterprise(url);
         GETcategories(url);
@@ -76,18 +107,19 @@ const Wrapper = (props) => {
                     }
                 })
         }
-    }, [enterpriseTemp])
+    }, [enterpriseTemp]);
 
     return (
         !enterpriseState || !menuState || !imageState || !categoryState ?
             <div></div>
             :
             <div>
-                <Navbar ENAME={enterpriseState.ename} />
+                <Navbar ENAME={enterpriseState.ename} loginState={loginState} setLoginState={setLoginState} eno={enterpriseCode}/>
                 <Grid container>
                     <Grid item lg={2} sm={3} xs={2}>
                         <Leftbar setFeed={setFeed} userType={userType}
                             categoryList={categoryState.categories}
+                            loginState={loginState}
                         />
                     </Grid>
                     <Grid item lg={7} sm={6} xs={10}>

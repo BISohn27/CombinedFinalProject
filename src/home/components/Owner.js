@@ -46,17 +46,18 @@ function Owner({ placement }) {
         }else if(loginPwd === ""){
             alert("비밀번호를 입력하세요.");
         }else{
-            console.log("로그인");
-            axios.post('http://localhost:20000/login', {
+            axios.post('http://localhost:20000/authenticate', {
                 eno: loginId,
                 password: loginPwd
             }).then(function (response) {
-                console.log(response.data.status);
-                if(response.data.status === true){
-                    const path = `/enterprises/${loginId}`;
-                    navigation(path)
+                if(response.status === 200){
+                    localStorage.setItem('token',response.data.token);
+                    localStorage.setItem('eno', response.data.eno);
+
+                    const path = `/enterprises/${response.data.eno}`;
+                    navigation(path);
                 }else{
-                    alert("아이디와 비밀번호를 확인하세요.");
+                    alert("아이디 또는 비밀번호를 확인하세요.");
                 }
             });
         }
