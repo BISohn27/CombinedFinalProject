@@ -1,20 +1,17 @@
 package com.fm.jwt;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import com.fm.configuration.security.SecurityUser;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -34,7 +31,7 @@ public class TokenProvider implements InitializingBean{
 	
 	private final String secret = "c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK";
 	private final long tokenValidityInMilliseconds = 86400 * 1000;
-	
+	 
 	private Key key;
 	
 	@Override
@@ -44,16 +41,16 @@ public class TokenProvider implements InitializingBean{
 	}
 	
 	public String createToken(Authentication authentication) {
-		String authorities = authentication.getAuthorities().stream()
-								.map(GrantedAuthority::getAuthority)
-								.collect(Collectors.joining(","));
+//		String authorities = authentication.getAuthorities().stream()
+//								.map(GrantedAuthority::getAuthority)
+//								.collect(Collectors.joining(","));
 		
 		long now = (new Date()).getTime();
 		Date validity = new Date(now + this.tokenValidityInMilliseconds);
 		
 		return Jwts.builder()
 					.setSubject(authentication.getName())
-					.claim(AUTHORITIES_KEY, authorities)
+//					.claim(AUTHORITIES_KEY, authorities)
 					.signWith(key,SignatureAlgorithm.HS512)
 					.setExpiration(validity)
 					.compact();
@@ -67,14 +64,21 @@ public class TokenProvider implements InitializingBean{
 				.parseClaimsJws(token)
 				.getBody();
 		
-		Collection<? extends GrantedAuthority> authorities =
-				Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-						.map(SimpleGrantedAuthority::new)
-						.collect(Collectors.toList());
+//		Collection<? extends GrantedAuthority> authorities =
+//				Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+//						.map(SimpleGrantedAuthority::new)
+//						.collect(Collectors.toList());
 		
-		User principal = new User(claims.getSubject(),"",authorities);
+		UserDetails principal = new SecurityUser(claims.getSubject(),"");
+
+		return new UsernamePasswordAuthenticationToken(principal,token,null);
+	}
+	
+	public Long getExpiration(String token) {
+		Date expriation = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration();
+		Long now = new Date().getTime();
 		
-		return new UsernamePasswordAuthenticationToken(principal,token,authorities);
+		return expriation.getTime()-now;
 	}
 	
 	public boolean validateToken(String token) {
@@ -91,5 +95,20 @@ public class TokenProvider implements InitializingBean{
 			logger.info("JWT이 잘못되었습니다.");
 		}
 		return false;
+	}
+	
+	public String getSubject(String token) {
+		try {
+			return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+		}catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+			logger.info("잘못된 JWT 서명입니다.");
+		} catch (ExpiredJwtException e) {
+			logger.info("만료된 JWT입니다.");
+		} catch(UnsupportedJwtException e) {
+			logger.info("지원하지 않는 JWT입니다.");
+		} catch(IllegalArgumentException e) {
+			logger.info("JWT이 잘못되었습니다.");
+		}
+		return null;
 	}
 }

@@ -30,7 +30,7 @@ public interface EnterpriseMapper {
 	@Select("select eno from enterprise where PASSWORD=#{PASSWORD} and ENAME=#{ENAME} order by MODIFICATION_TIME desc limit 1")
 	public int POSTenterpriseResponse(@Param("PASSWORD") String PASSWORD, @Param("ENAME") String ENAME);
 
-	@Select("select eno,password from enterprise where ENO=#{ENO} order by MODIFICATION_TIME desc limit 1")
+	@Select("select * from enterprise where ENO=#{ENO} order by MODIFICATION_TIME desc limit 1")
 	public Enterprise GETenterprise(@Param("ENO") int ENO);
 
 	@Update("Update enterprise set " + "`PASSWORD`=#{PASSWORD},`ENAME`=#{ENAME},`POSTCODE`=#{POSTCODE},"
@@ -73,6 +73,6 @@ public interface EnterpriseMapper {
 	@Select("Select * from `orderdetail` where eno=#{ENO}")
 	public OrderDetail[] GETorderdetails(@Param("ENO")int ENO);
 
-	@Select("SELECT AUTO_INCREMENT FROM information_schema.tables WHERE table_name = `enterprise` AND table_schema = DATABASE( )")
+	@Select("SELECT count(eno) FROM `enterprise`")
 	public int GETEntNo();
 }

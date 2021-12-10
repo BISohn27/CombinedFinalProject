@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +45,8 @@ public class EnterpriseController {
 	private EnterpriseMapper mapper;
 	@Autowired
 	FinanceService fService;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	// 업체 추가하기
 	@PostMapping("/register")
@@ -56,9 +59,8 @@ public class EnterpriseController {
 		try {
 			JsonObject obj = gson.fromJson(param,  JsonObject.class);
 			JsonObject json = gson.fromJson(obj.get("registerInfo"), JsonObject.class);
-			System.out.println(json);
 
-			String PASSWORD = json.get("password").getAsString();
+			String PASSWORD = passwordEncoder.encode(json.get("password").getAsString());
 			String ENAME = json.get("ename").getAsString();
 			String POSTCODE = json.get("postcode").getAsString();
 			String ROAD_ADDRESS = json.get("road_address").getAsString();
@@ -93,7 +95,6 @@ public class EnterpriseController {
 
 	@GetMapping("/{eno}")
 	public Enterprise getEnterprise(@PathVariable("eno") int eno) {
-
 		Enterprise ent = mapper.GETenterprise(eno);
 		ent.setPassword(null);
 		
@@ -334,7 +335,6 @@ public class EnterpriseController {
 	public int GETEntNo() {
 		int result = 0;
 		result = mapper.GETEntNo();
-		System.out.println(result);
 		return result;
 	}
 }

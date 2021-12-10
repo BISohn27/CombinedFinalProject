@@ -17,11 +17,12 @@ public class SecurityUserDetailsService implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String eno) throws UsernameNotFoundException{
         Enterprise enterprise = mapper.GETenterprise(Integer.parseInt(eno));
-        
+    
         if(enterprise == null) {
         	throw new UsernameNotFoundException(eno + "을 데이터베이스에서 찾을 수 없습니다.");
         } else {
-        	return new SecurityUser(String.valueOf(enterprise.getEno()),enterprise.getPassword());
+        	UserDetails user = new SecurityUser(String.valueOf(enterprise.getEno()),enterprise.getPassword());
+        	return user;
         }
     }
 }
