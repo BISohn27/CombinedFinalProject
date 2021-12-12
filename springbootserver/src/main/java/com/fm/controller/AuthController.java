@@ -15,8 +15,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fm.dto.Login;
@@ -60,28 +63,29 @@ public class AuthController {
 		return new ResponseEntity<>(map, httpHeaders, HttpStatus.BAD_REQUEST.OK);
 	}
 	
-	@PostMapping("/authorize")
-	public ResponseEntity<Boolean> authorize(@RequestBody String param){
-		Map<String,String> map = null;
-		try {
-			map = jsonParcer.getJsonData(new String[] {"eno","token"}, param);
-			String token = map.get("token");
-			String enoFromParam = map.get("eno");
-			String eno =tokenProvider.getSubject(token);
-
-			if(eno.equals(enoFromParam)) {
-				return new ResponseEntity<>(true,HttpStatus.BAD_REQUEST.OK);
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
+	@GetMapping(path="/authorize/{eno}")
+	public ResponseEntity<Boolean> authorize(@PathVariable("eno")String enoFromPath, @RequestHeader(JwtFilter.AUTHORIZATION_HEADER) String token){
+		token = token.substring(7);
+		String eno =tokenProvider.getSubject(token);
+		
+		if(eno.equals(enoFromPath)) {
+			return new ResponseEntity<>(true,HttpStatus.BAD_REQUEST.OK);
+		} else {
+			return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST.OK);
 		}
-		return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST.OK);
+	}
+	
+	@GetMapping("/authorize")
+	public ResponseEntity<String> authorize(@RequestHeader(JwtFilter.AUTHORIZATION_HEADER) String token){
+		token = token.substring(7);
+		String eno =tokenProvider.getSubject(token);
+		
+		return new ResponseEntity<>(eno,HttpStatus.BAD_REQUEST.OK);
 	}
 	
 	@PostMapping("/logouts")
 	public ResponseEntity<?> logout(@RequestBody String param){
 		Map<String,String> map = null;
-		System.out.println(2); 
 		try {
 			map = jsonParcer.getJsonData(new String[] {"eno","token"}, param);
 			String token = map.get("token");
@@ -90,7 +94,6 @@ public class AuthController {
 			Long expiration = tokenProvider.getExpiration(token);
 			
 			if(eno.equals(enoFromParam)) {
-				System.out.println(1);
 				redisTemplate.opsForValue().set(token,"logout",expiration,TimeUnit.MILLISECONDS);
 				return new ResponseEntity<Boolean>(true,HttpStatus.OK);
 			}

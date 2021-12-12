@@ -91,7 +91,6 @@ function Pos() {
             getOccupiedTables(enterpriseCode);
         });
         socket.on('payToPos', (pay) =>{
-            console.log(1);
             if(window.confirm(`${pay.message.tno}번 테이블에서 결제를 요청했습니다.`)){
                 payment(pay.message.eno, pay.message.tno);
                 alert('결제가 완료되었습니다.');

@@ -5,6 +5,7 @@ import Menu from "./businessesdetail/Menu";
 import Home from "./home/routes/Home";
 import PosComponent from "./pos/PosComponent";
 import Finance from "./finance/routes/Finance";
+import Table from "./table/routes/Table";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route exact path="/enterprises/:enterpriseCode/tables/:table/menu" element={<Menu placement="end" />} />
         <Route exact path="/enterprises/:enterpriseCode/pos" element={<PosComponent />} />
         <Route exact path="/enterprises/:eno/finance"    element={<Finance />} />
+        <Route exact path="/enterprises/:eno/tables"     element={<Table/>}/>
       </Routes>
     </Router>
   );

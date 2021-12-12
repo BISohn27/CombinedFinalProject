@@ -1,0 +1,15 @@
+.table{
+    padding-left: 50px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.noOccupied{
+    font-size: xx-large;
+    color: green;
+}
+.occupied{
+    font-size: xx-large;
+    color: red;
+}

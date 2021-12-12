@@ -14,6 +14,7 @@ public class Table {
 	private int like;
 	private char state;
 	private int ocode;
+	
 	public int getTno() {
 		return tno;
 	}

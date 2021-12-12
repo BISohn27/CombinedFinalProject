@@ -32,7 +32,6 @@ const Navbar = (props) => {
                 eno: eno
             }
         });
-        console.log(state);
         window.localStorage.clear();
         setLoginState(false);
     };

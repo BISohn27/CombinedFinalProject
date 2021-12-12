@@ -134,20 +134,6 @@ public class OrderController {
 		return result.toString();
 	}
 
-	@PostMapping("/{ocode}/payment")
-	public String orderPayment(@PathVariable("ocode") int ocode) {
-		JsonObject result = new JsonObject();
-		result.addProperty("status", false);
-		
-		try {
-			mapper.payment(ocode);
-			result.addProperty("status", true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result.toString();
-	}
-
 	// 주문상세(orderdetail) 레이어
 	@GetMapping("/{ocode}/orderdetails")
 	public String getOrederDetails(@PathVariable("eno") int eno, @PathVariable("ocode") int ocode) {
@@ -165,5 +151,19 @@ public class OrderController {
 		
 		return result.toString();
 	}
+	
+//	@PostMapping("/{ocode}/payment")
+//	public String orderPayment(@PathVariable("ocode") int ocode) {
+//		JsonObject result = new JsonObject();
+//		result.addProperty("status", false);
+//		
+//		try {
+//			mapper.payment(ocode);
+//			result.addProperty("status", true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return result.toString();
+//	}
 
 }

@@ -23,9 +23,6 @@ public interface TableMapper {
 	@Select("Select tno from `table` where eno=#{ENO} order by tno desc limit 1")
 	public int POSTtableResponse(@Param("ENO") int ENO);
 	
-	@Select("select * from `table` where TNO=#{TNO} and eno=#{eno}")
-	public Table GETtable(@Param("TNO") int TNO, @Param("eno")int eno);
-	
 	@Update("Update `table` set eno=#{ENO}, seat_num=#{SEAT_NUM}, window_seat=#{WINDOW_SEAT},"
 			+ "`like`=#{LIKE}, `state`=#{STATE} where tno=#{TNO}")
 	public void PUTtable(@Param("TNO") int TNO, @Param("ENO") int ENO, @Param("SEAT_NUM") int SEAT_NUM,
@@ -33,6 +30,18 @@ public interface TableMapper {
 	
 	@Delete("Delete from `table` where TNO=#{TNO}")
 	public void DELETEtable(@Param("TNO") int TNO);
+	
+	@Select("select * from `table` where TNO=#{TNO} and eno=#{eno}")
+	public Table GETtable(@Param("TNO") int TNO, @Param("eno")int eno);
+	
+	@Select("Select * from `table` where eno=#{ENO}")
+	public Table[] getTables(@Param("ENO")int ENO);
+	
+	@Select("select * from `table` where eno=#{eno} and window_seat='y'")
+	public Table[] getWindowTables(@Param("eno")int eno);
+
+	@Select("select * from `table` where eno=#{eno} and window_seat='N'")
+	public Table[] getGeneralTables(@Param("eno")int eno);
 	
 	@Select("select count(tno) from `table` where eno=${eno}")
 	public int getSeatNum(@Param("eno") int eno);

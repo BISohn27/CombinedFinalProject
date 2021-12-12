@@ -60,40 +60,50 @@ public class TableController {
 		
 		return result.toString();
 	}
-		//get occupied table by table view(mysql)
-		@GetMapping("/order")
-		public ResponseEntity<Map<String,List<TableView>>> getTableView(@PathVariable("eno")int eno){
-			List<TableView> list = null;
-			Map<String,List<TableView>> map = new HashMap<>();
-			try {
-				list = mapper.getOccupiedTables(eno);
-				int seat_num = 0;
-				
-				if(list != null) {
-					List<TableView> tempList = null;
-					for(TableView tv : list) {
-						if(tv.getSeat_num() == seat_num) {
-							tempList.add(tv);
-						} else {
-							if(seat_num != 0) {
-								map.put(String.valueOf(seat_num), tempList);
-							}
-							seat_num = tv.getSeat_num();
-							tempList = new ArrayList<>();
-							tempList.add(tv);
+	
+	@GetMapping()
+	public ResponseEntity<Map<String,Table[]>> getTables(@PathVariable("eno")int eno){
+		Map<String,Table[]> map = new HashMap<>();
+		map.put("window", mapper.getWindowTables(eno));
+		map.put("general", mapper.getGeneralTables(eno));
+		
+		return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST.OK);
+	}
+	
+	// get occupied table by table view(mysql)
+	@GetMapping("/order")
+	public ResponseEntity<Map<String, List<TableView>>> getTableView(@PathVariable("eno") int eno) {
+		List<TableView> list = null;
+		Map<String, List<TableView>> map = new HashMap<>();
+		try {
+			list = mapper.getOccupiedTables(eno);
+			int seat_num = 0;
+
+			if (list != null) {
+				List<TableView> tempList = null;
+				for (TableView tv : list) {
+					if (tv.getSeat_num() == seat_num) {
+						tempList.add(tv);
+					} else {
+						if (seat_num != 0) {
+							map.put(String.valueOf(seat_num), tempList);
 						}
+						seat_num = tv.getSeat_num();
+						tempList = new ArrayList<>();
+						tempList.add(tv);
 					}
-					map.put(String.valueOf(seat_num), tempList);
 				}
-			}catch(Exception e) {
-				e.printStackTrace();
+				map.put(String.valueOf(seat_num), tempList);
 			}
-			if(!map.isEmpty()) {
-				return new ResponseEntity<Map<String,List<TableView>>>(map,HttpStatus.BAD_REQUEST.OK);
-			}else {
-				return new ResponseEntity<Map<String,List<TableView>>>(map,HttpStatus.BAD_REQUEST.OK);
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		if (!map.isEmpty()) {
+			return new ResponseEntity<Map<String, List<TableView>>>(map, HttpStatus.BAD_REQUEST.OK);
+		} else {
+			return new ResponseEntity<Map<String, List<TableView>>>(map, HttpStatus.BAD_REQUEST.OK);
+		}
+	}	
 	
 	@PostMapping("/{tno}/order")
 	public ResponseEntity<Integer> updateTableOrder(@PathVariable("eno")int eno, @PathVariable("tno")int tno, @RequestBody String param) {
@@ -101,7 +111,7 @@ public class TableController {
 		result.addProperty("status", false);
 		Gson gson = new Gson();
 		int state = 0;
-		System.out.println(eno);
+		
 		try {
 			JsonObject json = gson.fromJson(param, JsonObject.class);
 			state = mapper.updateTable(eno, tno, json.get("ocode").getAsInt());
