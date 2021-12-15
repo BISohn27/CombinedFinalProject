@@ -108,7 +108,6 @@ io.on('connection', socket => {
     // pay to Pos
     socket.on('payFromTable', pay => {
         const connection = getConnectionByEno(pay.eno);
-        console.log(112);
         if (connection)
             io.to(connection.socketId).emit('payToPos', { message: pay.body });
         else

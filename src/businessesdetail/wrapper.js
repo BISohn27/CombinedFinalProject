@@ -48,16 +48,11 @@ const Wrapper = (props) => {
 
     const authenticate = async (token,setState) => {
         const state = await axios({
-                            url: "http://localhost:20000/authorize",
-                            method: "post",
+                            url: `http://localhost:20000/authorize/${enterpriseCode}`,
+                            method: "get",
                             responseType:"json",
                             headers: {
                                 'Authorization': 'Bearer ' + token,
-                                "Content-Type": "application/json"
-                            },
-                            data: {
-                                    token: token,
-                                    eno: enterpriseCode
                             },
                         });
         if(state.data){

@@ -9,6 +9,8 @@ import InputForRegister from './InputForRegister';
 
 function Owner({ placement }) {
     const [id, setId] = useState(0);
+    const [loginState, setLoginState] = useState(false);
+    const [eno, setEno] = useState();
 
     // 오프캔버스 핸들링
     const [show, setShow] = useState(false);
@@ -56,11 +58,11 @@ function Owner({ placement }) {
 
                     const path = `/enterprises/${response.data.eno}`;
                     navigation(path);
-                }else{
-                    alert("아이디 또는 비밀번호를 확인하세요.");
                 }
+            }).catch(err=>{
+                alert("아이디 또는 비밀번호를 확인하세요.");
             });
-        }
+        };
     };
 
     const [registerInputs, setRegisterInputs] = useState({
@@ -88,7 +90,7 @@ function Owner({ placement }) {
         axios.post('http://localhost:20000/enterprises/register', {
             registerInfo: registerInputs
         }).then(function (response) {
-            if(response.status == 200){
+            if(response.status === 200){
                 console.log(response.status);
                 alert("등록되었습니다.");
                 setRegisterInputs({
@@ -108,13 +110,50 @@ function Owner({ placement }) {
           });
           setShow(false);
     }
+    const goToPage = () => {
+        const url = `/enterprises/${eno}`;
+        navigation(url);
+    };
+    const authenticate = async (token) =>{
+        try{
+            const json = await axios({
+                url: `http://localhost:20000/authorize`,
+                method: "get",
+                responseType:"json",
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'content-type' : 'application/json',
+                },
+            });
+            setEno(json.data);
+            setLoginState(true);
+        }catch{
+            setLoginState(false);
+        }
+    }
+
+    useEffect(()=>{
+        const token = localStorage.getItem("token");
+        
+        if(token !== null && token !== undefined){
+            authenticate(token);
+        } else{
+            setLoginState(false);
+        }
+    },[])
 
     return (
     <>
         <div>
-            <Button variant="secondary" size="sm" onClick={handleShow}>
-                점주페이지
-            </Button>
+            {loginState ? 
+                <Button variant="secondary" size="sm" onClick={goToPage}>
+                    점주페이지
+                </Button>
+                :
+                <Button variant="secondary" size="sm" onClick={handleShow}>
+                    점주페이지
+                </Button>
+            }
             <Offcanvas show={show} onHide={handleClose} placement={placement}>
             <Offcanvas.Header closeButton>
                 <Offcanvas.Title>점주페이지</Offcanvas.Title>

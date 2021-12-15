@@ -58,9 +58,6 @@ public interface EnterpriseMapper {
 	@Select("Select * from image where eno=#{ENO}")
 	public Image[] GETimages(@Param("ENO")int ENO);
 	
-	@Select("Select * from `table` where eno=#{ENO}")
-	public Table[] GETtables(@Param("ENO")int ENO);
-	
 	@Select("Select * from `menu` where eno=#{ENO}")
 	public Menu[] GETmenus(@Param("ENO")int ENO);
 	

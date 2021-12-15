@@ -7,6 +7,8 @@ import Inform from "./Inform";
 import superagent from "superagent"
 import { useParams } from "react-router";
 
+import Table from "../table/routes/Table";
+
 const theme = createTheme()
 const useStyles = makeStyles(() => ({
     container: {
@@ -65,7 +67,7 @@ const Feed = (props) => {
                     enterpriseJson={enterpriseJson} setEnterpriseJson={setEnterpriseJson} />
                 :
                 feed === "TableState" ?
-                    <div>TableState</div>
+                    <Table eno={enterpriseCode}/>
                     :
                     feed === "Gallery" ?
                         <div>

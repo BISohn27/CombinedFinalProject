@@ -207,24 +207,6 @@ public class EnterpriseController {
 		return result.toString();
 	}
 
-	// 테이블(table) 레이어
-	@GetMapping("/{eno}/tables")
-	public String getTables(@PathVariable("eno") int eno) {
-		Table[] tables = mapper.GETtables(eno);
-		
-		JsonObject result = new JsonObject();
-		Gson gson = new Gson();
-		JsonArray jsonArr =new JsonArray();
-		for( Table element : tables) {
-			JsonObject insertJson = gson.fromJson(gson.toJson(element), JsonObject.class);
-			jsonArr.add(insertJson);
-		}
-		
-		result.add("tables", jsonArr);
-		
-		return result.toString();
-	}
-
 	// 메뉴(menu) 레이어
 	@GetMapping("/{eno}/menus")
 	public String getMenus(@PathVariable("eno") int eno) {

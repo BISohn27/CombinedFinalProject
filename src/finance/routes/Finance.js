@@ -1,7 +1,6 @@
 import {useEffect, useState, Fragment} from 'react';
-import {useParams} from "react-router-dom";
+import {useParams,useNavigate} from "react-router-dom";
 import axios from 'axios';
-import Box from '@mui/material/Box';
 
 import SelectionBox from '../components/SelectionBox';
 import Chart from '../components/Chart';
@@ -21,6 +20,7 @@ function Finance () {
     const [dataState, setDataState] = useState(false);
     
     const {eno} = useParams();
+    const navigation = useNavigate();
 
     const getBusiness = async () => {
         const json = await axios({
@@ -53,9 +53,32 @@ function Finance () {
         setSalesList(json.data.saleslist);
         setKeyList(json.data.keylist);
     }
-    console.log(keyList);
+
+    const authenticate = async (token) => {
+        if(token !== null && token !== undefined){
+            const state = await axios({
+                                url: `http://localhost:20000/authorize/${eno}`,
+                                method: "get",
+                                responseType:"json",
+                                headers: {
+                                    'Authorization': 'Bearer ' + token,
+                                },
+                            });
+            console.log(state.data);
+            if(state.data){
+                getBusiness();
+            } else{
+                alert('잘못된 접근입니다. 메인 페이지로 돌아갑니다.');
+                navigation("/");
+            }
+        } else{
+            alert('잘못된 접근입니다. 메인 페이지로 돌아갑니다.');
+            navigation("/");
+        }
+    }
+
     useEffect(()=>{
-        getBusiness();
+        authenticate(localStorage.getItem("token"));
     },[]);
 
     useEffect(()=>{
